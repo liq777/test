@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>医疗服务预约系统</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#165DFF',
+                        secondary: '#7B61FF',
+                        accent: '#36CFC9',
+                        neutral: '#F5F7FA',
+                        'neutral-dark': '#4E5969',
+                        orange: {
+                            primary: '#FF7A00',
+                            secondary: '#FF9A38',
+                            accent: '#FFE8D6',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                        pingfang: ['PingFang SC', 'Microsoft YaHei', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        'button': '0 4px 12px rgba(22, 93, 255, 0.2)',
+                        'button-hover': '0 6px 16px rgba(22, 93, 255, 0.3)',
+                        'button-selected': '0 4px 12px rgba(123, 97, 255, 0.2)',
+                    }
+                },
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .text-shadow {
+                text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            }
+            .transition-all-300 {
+                transition: all 300ms ease-in-out;
+            }
+            .card-hover {
+                @apply transform hover:-translate-y-1 transition-all duration-300;
+            }
+            .input-error {
+                @apply border-red-500 focus:ring-red-200 focus:border-red-500;
+            }
+            .plan-btn {
+                @apply py-3 px-6 rounded-lg font-medium transition-all duration-300 text-center cursor-pointer;
+            }
+            .plan-btn-active {
+                @apply bg-orange-primary text-white shadow-lg transform scale-105;
+            }
+            .plan-btn-inactive {
+                @apply bg-white border border-gray-200 text-gray-700 hover:bg-gray-50;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 font-sans text-neutral-dark">
+    <!-- 页面容器 - 三个页面共用，通过显示/隐藏控制 -->
+    <div id="page1" class="max-w-3xl mx-auto bg-white min-h-screen shadow-lg">
+        <!-- 顶部导航栏 -->
+        <header class="bg-primary text-white py-4 px-6 shadow-md">
+            <h1 class="text-xl font-bold flex items-center">
+                <i class="fa fa-heartbeat mr-2"></i>
+                医疗服务预约系统
+            </h1>
+        </header>
+
+        <!-- 主内容区 -->
+        <main class="p-6 md:p-8">
+            <!-- 步骤导航 -->
+            <div class="mb-10">
+                <div class="flex items-center justify-between relative">
+                    <!-- 连接线 -->
+                    <div class="absolute top-1/2 left-0 right-0 h-1 bg-gray-200 -translate-y-1/2 z-0"></div>
+                    <div class="absolute top-1/2 left-0 w-1/3 h-1 bg-primary -translate-y-1/2 z-10 transition-all duration-500"></div>
+                    
+                    <!-- 步骤1 -->
+                    <div class="flex flex-col items-center z-20">
+                        <div class="w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center font-bold mb-2 shadow-button">1</div>
+                        <span class="text-sm font-medium text-primary">选择手术项目</span>
+                    </div>
+                    
+                    <!-- 步骤2 -->
+                    <div class="flex flex-col items-center z-20">
+                        <div class="w-10 h-10 rounded-full bg-gray-200 text-gray-500 flex items-center justify-center font-bold mb-2">2</div>
+                        <span class="text-sm font-medium text-gray-500">填写投保内容</span>
+                    </div>
+                    
+                    <!-- 步骤3 -->
+                    <div class="flex flex-col items-center z-20">
+                        <div class="w-10 h-10 rounded-full bg-gray-200 text-gray-500 flex items-center justify-center font-bold mb-2">3</div>
+                        <span class="text-sm font-medium text-gray-500">支付保单</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 手术项目选择区 -->
+            <section class="mb-12">
+                <h2 class="text-[clamp(1.5rem,3vw,1.8rem)] font-bold text-center mb-8 text-gray-800">请选择手术项目</h2>
+                
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+                    <!-- 第一排 -->
+                    <button class="surgery-btn bg-primary hover:bg-primary/90 text-white py-3 px-4 rounded-lg shadow-button hover:shadow-button-hover transition-all-300 font-medium card-hover">
+                        骨科
+                    </button>
+                    <button class="surgery-btn bg-primary hover:bg-primary/90 text-white py-3 px-4 rounded-lg shadow-button hover:shadow-button-hover transition-all-300 font-medium card-hover">
+                        胸外科
+                    </button>
+                    <button class="surgery-btn bg-primary hover:bg-primary/90 text-white py-3 px-4 rounded-lg shadow-button hover:shadow-button-hover transition-all-300 font-medium card-hover">
+                        妇产科
+                    </button>
+                    
+                    <!-- 第二排 -->
+                    <button class="surgery-btn bg-primary hover:bg-primary/90 text-white py-3 px-4 rounded-lg shadow-button hover:shadow-button-hover transition-all-300 font-medium card-hover">
+                        脊柱外科
+                    </button>
+                    <button class="surgery-btn bg-primary hover:bg-primary/90 text-white py-3 px-4 rounded-lg shadow-button hover:shadow-button-hover transition-all-300 font-medium card-hover">
+                        胃肠减重
+                    </button>
+                    <button class="surgery-btn bg-primary hover:bg-primary/90 text-white py-3 px-4 rounded-lg shadow-button hover:shadow-button-hover transition-all-300 font-medium card-hover">
+                        胃肠镜及息肉
+                    </button>
+                    
+                    <!-- 第三排 -->
+                    <button class="surgery-btn bg-primary hover:bg-primary/90 text-white py-3 px-4 rounded-lg shadow-button hover:shadow-button-hover transition-all-300 font-medium card-hover">
+                        骨科
+                    </button>
+                    <button class="surgery-btn bg-secondary hover:bg-secondary/90 text-white py-3 px-4 rounded-lg shadow-button-selected hover:shadow-button-hover transition-all-300 font-medium card-hover ring-4 ring-secondary/30">
+                        胸外科
+                    </button>
+                    <button class="surgery-btn bg-primary hover:bg-primary/90 text-white py-3 px-4 rounded-lg shadow-button hover:shadow-button-hover transition-all-300 font-medium card-hover">
+                        妇产科
+                    </button>
+                    
+                    <!-- 第四排 -->
+                    <button class="surgery-btn bg-primary hover:bg-primary/90 text-white py-3 px-4 rounded-lg shadow-button hover:shadow-button-hover transition-all-300 font-medium card-hover">
+                        骨科
+                    </button>
+                    <button class="surgery-btn bg-primary hover:bg-primary/90 text-white py-3 px-4 rounded-lg shadow-button hover:shadow-button-hover transition-all-300 font-medium card-hover">
+                        保胆取石
+                    </button>
+                </div>
+            </section>
+
+            <hr class="my-8 border-gray-200">
+
+            <!-- 联系方式表单 -->
+            <section class="mb-10">
+                <h2 class="text-[clamp(1.5rem,3vw,1.8rem)] font-bold text-center mb-6 text-gray-800">请填写联系方式</h2>
+                
+                <form class="space-y-5 max-w-md mx-auto">
+                    <div class="flex items-center justify-between">
+                        <label for="name" class="text-gray-700 font-medium">姓 名</label>
+                        <input type="text" id="name" class="w-2/3 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all" placeholder="请输入姓名">
+                    </div>
+                    
+                    <div class="flex items-center justify-between">
+                        <label for="phone" class="text-gray-700 font-medium">手机号码</label>
+                        <input type="tel" id="phone" class="w-2/3 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all" placeholder="请输入手机号码">
+                    </div>
+                    
+                    <div class="text-center pt-4">
+                        <button type="button" id="submit-btn" class="bg-primary hover:bg-primary/90 text-white font-medium py-3 px-10 rounded-full shadow-button hover:shadow-button-hover transition-all-300 transform hover:-translate-y-1 active:translate-y-0">
+                            提交
+                        </button>
+                    </div>
+                </form>
+            </section>
+
+            <!-- 预留区域 -->
+            <section class="bg-gray-200 rounded-lg p-6 text-center py-16 my-8">
+                <h3 class="text-xl text-gray-500 font-medium">此区域内容待定</h3>
+            </section>
+        </main>
+
+        <!-- 页脚 -->
+        <footer class="bg-gray-100 py-4 px-6 text-center text-sm text-gray-500">
+            <p>© 2023 医疗服务预约系统 - 版权所有</p>
+            <p class="mt-1">服务热线: 400-123-4567</p>
+        </footer>
+
+        <!-- 确认弹窗 -->
+        <div id="confirm-modal" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 hidden">
+            <div class="bg-white rounded-lg p-6 max-w-md w-full mx-4 transform transition-all duration-300 scale-95 opacity-0" id="confirm-modal-content">
+                <div class="text-center">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">请确认：</h3>
+                    <p class="text-gray-600 mb-6">您选择的是：<span class="text-red-500 font-medium" id="selected-surgery">骨科</span> 手术项目。</p>
+                    <p class="text-gray-600 mb-6">正确请按“确定”，重新选择请按“取消”</p>
+                    <div class="flex justify-center gap-4">
+                        <button id="cancel-btn" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-medium py-2 px-6 rounded-full transition-all">
+                            取消
+                        </button>
+                        <button id="confirm-btn" class="bg-primary hover:bg-primary/90 text-white font-medium py-2 px-6 rounded-full transition-all">
+                            确定
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 错误提示弹窗 -->
+        <div id="error-modal" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 hidden">
+            <div class="bg-white rounded-lg p-6 max-w-md w-full mx-4 transform transition-all duration-300 scale-95 opacity-0" id="error-modal-content">
+                <div class="text-center">
+                    <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fa fa-exclamation-triangle text-2xl text-red-500"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-2">输入错误</h3>
+                    <p class="text-gray-600 mb-6" id="error-message">请检查您输入的信息</p>
+                    <button id="close-error-btn" class="bg-primary hover:bg-primary/90 text-white font-medium py-2 px-6 rounded-full transition-all">
+                        确定
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="page2" class="max-w-4xl mx-auto bg-white min-h-screen hidden">
+        <!-- 顶部导航栏 -->
+        <header class="bg-orange-primary text-white py-4 px-6 shadow-md sticky top-0 z-10">
+            <div class="flex items-center justify-between">
+                <a href="#" class="flex items-center" id="back-to-page1">
+                    <i class="fa fa-chevron-left mr-2"></i>
+                    <span class="text-lg font-bold">平安骨科关节置换术安心保障计划</span>
+                </a>
+                <div class="flex items-center">
+                    <i class="fa fa-question-circle-o mr-3"></i>
+                    <i class="fa fa-share-alt"></i>
+                </div>
+            </div>
+        </header>
+
+        <!-- 主内容区 -->
+        <main class="p-4 md:p-6">
+            <!-- 顶部横幅 -->
+            <section class="bg-orange-accent rounded-t-lg overflow-hidden mb-6">
+                <div class="flex flex-col md:flex-row items-center">
+                    <div class="p-4 md:p-6 md:w-2/3">
+                        <h1 class="text-[clamp(1.5rem,3vw,2rem)] font-bold text-orange-800 mb-2">平安骨科关节置换术安心保障计划(普仁)</h1>
+                        <p class="text-orange-700 mb-3">买保险，买平安</p>
+                    </div>
+                    <div class="w-full md:w-1/3 p-4">
+                        <img src="https://picsum.photos/300/200" alt="骨科关节置换术医疗场景" class="w-full h-auto rounded-lg shadow-md">
+                    </div>
+                </div>
+            </section>
+
+            <!-- 保障计划选择 -->
+            <section class="mb-8">
+                <h2 class="text-lg font-bold text-neutral-dark mb-4">保障计划</h2>
+                <div class="flex flex-col md:flex-row">
+                    <button class="plan-btn plan-btn-active mb-2 md:mb-0 md:mr-4" id="basic-plan">
+                        基础版
+                    </button>
+                    <button class="plan-btn plan-btn-inactive" id="premium-plan">
+                        升级版
+                    </button>
+                </div>
+
+                <!-- 保障内容 -->
+                <div class="mt-6 space-y-3">
+                    <div class="bg-gray-50 p-3 rounded-lg">
+                        <div class="flex justify-between">
+                            <span class="text-gray-700">手术意外身故和残疾</span>
+                            <span class="font-medium text-gray-800">5万元</span>
+                        </div>
+                    </div>
+                    <div class="bg-gray-50 p-3 rounded-lg">
+                        <div class="flex justify-between">
+                            <span class="text-gray-700">手术意外并发症</span>
+                            <span class="font-medium text-gray-800">1万元</span>
+                        </div>
+                    </div>
+                    <a href="#" class="text-orange-primary hover:underline text-sm">查看责任详情</a>
+                </div>
+            </section>
+
+            <!-- 理赔指引 -->
+            <section class="mb-8">
+                <div class="flex border-b border-gray-200">
+                    <button class="py-2 px-4 text-orange-primary font-medium border-b-2 border-orange-primary" id="claim-guide-tab">
+                        理赔指引
+                    </button>
+                    <button class="py-2 px-4 text-gray-500 font-medium hover:text-gray-700" id="buy-insurance-tab">
+                        我要投保
+                    </button>
+                </div>
+
+                <div class="mt-4">
+                    <div class="flex items-start">
+                        <div class="bg-orange-primary rounded-full w-6 h-6 flex items-center justify-center text-white text-xs mr-3 mt-1">
+                            <i class="fa fa-check"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-neutral-dark">省心赔</h3>
+                            <p class="text-gray-600 text-sm">极简、闪赔、贴心</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-600 text-sm mt-1">2023年理赔金额超1600亿元，服务客户超5亿人次</p>
+
+                    <h3 class="font-bold text-neutral-dark mt-4">理赔流程</h3>
+                    <ol class="list-decimal list-inside space-y-3 mt-2 text-gray-700">
+                        <li>
+                            <span class="font-medium">第一步：出险报案</span>
+                            <p class="text-sm mt-1">出险后，可在好车主/好生活APP首页点击 <span class="text-orange-primary">办理赔 — 非车理赔</span>，填写理赔信息，选择保单，完成报案</p>
+                        </li>
+                        <li>
+                            <span class="font-medium">第二步：提交资料</span>
+                            <p class="text-sm mt-1">若人受伤，收集门诊病历、门诊发票、出院小结、住院发票等理赔材料；<br>
+                            若财产损失，收集损失照片、购置凭证、事故证明等理赔材料；<br>
+                            通过 <span class="text-orange-primary">办理赔 — 非车理赔 — 材料上传</span>，提交材料；<br>
+                            材料提交后，可在 <span class="text-orange-primary">办理赔</span> 查进度、联系/催办理赔员</p>
+                        </li>
+                        <li>
+                            <span class="font-medium">第三步：完成理赔</span>
+                            <p class="text-sm mt-1">收齐理赔材料后，简单案件（1万元以内）<span class="text-orange-primary">5个工作日</span> 完成责任审核及赔款支付，复杂案件30日内完成核定</p>
+                        </li>
+                    </ol>
+                </div>
+            </section>
+
+            <!-- 投保人信息 -->
+            <section class="mb-6">
+                <h2 class="text-lg font-bold text-neutral-dark mb-4">投保人（本人）</h2>
+                <div class="flex justify-between items-center mb-2">
+                    <span class="text-gray-700">姓名</span>
+                    <div class="flex items-center">
+                        <input type="text" placeholder="请输入姓名" class="w-64 py-2 px-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-primary/50 focus:border-orange-primary">
+                        <button class="ml-2 text-orange-primary hover:underline">身份证识别</button>
+                    </div>
+                </div>
+                <div class="flex justify-between items-center mb-2">
+                    <span class="text-gray-700">身份证</span>
+                    <input type="text" placeholder="请输入证件号码" class="w-64 py-2 px-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-primary/50 focus:border-orange-primary">
+                </div>
+                <div class="flex justify-between items-center mb-2">
+                    <span class="text-gray-700">手机号码</span>
+                    <input type="tel" placeholder="请输入手机号码" class="w-64 py-2 px-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-primary/50 focus:border-orange-primary">
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-gray-700">邮箱</span>
+                    <input type="email" placeholder="用于接收电子保单" class="w-64 py-2 px-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-primary/50 focus:border-orange-primary">
+                </div>
+            </section>
+
+            <!-- 被保人信息 -->
+            <section class="mb-6">
+                <h2 class="text-lg font-bold text-neutral-dark mb-4">被保人（为谁投保）</h2>
+                <div class="flex flex-wrap gap-2 mb-4">
+                    <button class="py-1 px-3 bg-orange-primary text-white rounded-full text-sm">本人</button>
+                    <button class="py-1 px-3 bg-white border border-gray-200 rounded-full text-sm text-gray-700 hover:bg-gray-50">配偶</button>
+                    <button class="py-1 px-3 bg-white border border-gray-200 rounded-full text-sm text-gray-700 hover:bg-gray-50">父母</button>
+                    <button class="py-1 px-3 bg-white border border-gray-200 rounded-full text-sm text-gray-700 hover:bg-gray-50">子女</button>
+                    <button class="py-1 px-3 bg-white border border-gray-200 rounded-full text-sm text-gray-700 hover:bg-gray-50">其他</button>
+                </div>
+                <div class="flex items-center">
+                    <span class="text-gray-700 mr-3">有无社保（含新农合）</span>
+                    <button class="py-1 px-3 bg-orange-primary text-white rounded-full text-sm">有</button>
+                    <button class="py-1 px-3 bg-white border border-gray-200 rounded-full text-sm text-gray-700 hover:bg-gray-50 ml-2">无</button>
+                </div>
+            </section>
+
+            <!-- 受益人信息 -->
+            <section class="mb-6">
+                <h2 class="text-lg font-bold text-neutral-dark mb-4">受益人为法定受益人</h2>
+                <div class="flex items-center text-gray-700">
+                    <i class="fa fa-question-circle-o text-orange-primary mr-2"></i>
+                    <span class="text-sm">法定受益人是指被保险人的配偶、子女、父母；同一顺序继承人之间平均分配</span>
+                </div>
+            </section>
+
+            <!-- 协议同意 -->
+            <section class="mb-6">
+                <div class="space-y-2">
+                    <label class="flex items-center">
+                        <input type="checkbox" class="mr-2">
+                        <span class="text-sm text-gray-700">同意《投保须知》《投保人授权协议》《保险条款》《免责条款》《信息披露》</span>
+                    </label>
+                    <label class="flex items-center">
+                        <input type="checkbox" class="mr-2">
+                        <span class="text-sm text-gray-700">同意《个人信息共享协议》</span>
+                    </label>
+                    <label class="flex items-center">
+                        <input type="checkbox" class="mr-2">
+                        <span class="text-sm text-gray-700">同意《平安产险投保人个人信息处理扩展业务授权协议》</span>
+                    </label>
+                </div>
+            </section>
+
+            <!-- 投保按钮 -->
+            <section class="fixed bottom-0 left-0 right-0 bg-white py-4 px-6 shadow-lg">
+                <div class="flex justify-between items-center">
+                    <div>
+                        <span class="text-gray-500 text-sm">合计</span>
+                        <span class="text-xl font-bold text-orange-primary ml-1">500元起</span>
+                    </div>
+                    <button id="go-to-page3" class="bg-orange-primary hover:bg-orange-primary/90 text-white font-medium py-3 px-8 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+                        立即投保
+                    </button>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <div id="page3" class="hidden">
+        <!DOCTYPE html>
+        <html lang="zh-CN">
+        <head>
+            <meta charset="UTF-8">
+            <title>付款码页面</title>
+            <style>
+                body {
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    justify-content: center;
+                    height: 100vh;
+                    margin: 0;
+                }
+                .title {
+                    font-size: 24px;
+                    color: #0000FF;
+                    margin-bottom: 20px;
+                }
+                .qr-code-box {
+                    width: 200px;
+                    height: 200px;
+                    border: 1px solid #000;
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    justify-content: center;
+                    text-align: center;
+                    padding: 10px;
+                    box-sizing: border-box;
+                }
+            </style>
+        </head>
+        <body>
+            <div class="title">请使用微信或支付宝扫码下面二维码付款</div>
+            <div class="qr-code-box">
+                <p>这里显示</p>
+                <p>保险公司提供的</p>
+                <p>付款码</p>
+            </div>
+            <button id="back-to-page2" class="mt-4 bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-2 px-6 rounded-full transition-all">
+                返回
+            </button>
+        </body>
+        </html>
+    </div>
+
+    <script>
+        // 页面切换函数
+        function showPage(pageId) {
+            // 隐藏所有页面
+            document.getElementById('page1').classList.add('hidden');
+            document.getElementById('page2').classList.add('hidden');
+            document.getElementById('page3').classList.add('hidden');
+            
+            // 显示目标页面
+            document.getElementById(pageId).classList.remove('hidden');
+        }
+
+        // 页面1相关功能
+        const nameInput = document.getElementById('name');
+        const phoneInput = document.getElementById('phone');
+        const submitBtn = document.getElementById('submit-btn');
+        const errorModal = document.getElementById('error-modal');
+        const errorModalContent = document.getElementById('error-modal-content');
+        const errorMessage = document.getElementById('error-message');
+        const closeErrorBtn = document.getElementById('close-error-btn');
+        
+        // 显示错误弹窗
+        function showError(message) {
+            errorMessage.textContent = message;
+            errorModal.classList.remove('hidden');
+            
+            // 清除输入框错误状态
+            nameInput.classList.remove('input-error');
+            phoneInput.classList.remove('input-error');
+            
+            // 触发动画
+            setTimeout(() => {
+                errorModalContent.classList.remove('scale-95', 'opacity-0');
+                errorModalContent.classList.add('scale-100', 'opacity-100');
+            }, 10);
+        }
+        
+        // 关闭错误弹窗
+        function closeErrorModal() {
+            errorModalContent.classList.remove('scale-100', 'opacity-100');
+            errorModalContent.classList.add('scale-95', 'opacity-0');
+            
+            setTimeout(() => {
+                errorModal.classList.add('hidden');
+            }, 300);
+        }
+        
+        // 验证表单
+        function validateForm() {
+            // 验证姓名
+            if (!nameInput.value.trim()) {
+                nameInput.classList.add('input-error');
+                showError('请输入您的姓名');
+                return false;
+            }
+            
+            // 验证手机号 (简单验证11位数字)
+            const phoneValue = phoneInput.value.trim();
+            if (!phoneValue || phoneValue.length !== 11 || !/^\d{11}$/.test(phoneValue)) {
+                phoneInput.classList.add('input-error');
+                showError('请输入有效的11位手机号码');
+                return false;
+            }
+            
+            // 验证是否选择了手术项目
+            const selectedBtn = document.querySelector('.surgery-btn.bg-secondary');
+            if (!selectedBtn) {
+                showError('请选择手术项目');
+                return false;
+            }
+            
+            return true;
+        }
+        
+        // 为输入框添加实时验证，清除错误状态
+        nameInput.addEventListener('input', function() {
+            if (this.value.trim()) {
+                this.classList.remove('input-error');
+            }
+        });
+        
+        phoneInput.addEventListener('input', function() {
+            const phoneValue = this.value.trim();
+            if (phoneValue.length === 11 && /^\d{11}$/.test(phoneValue)) {
+                this.classList.remove('input-error');
+            }
+        });
+
+        // 手术项目按钮点击效果
+        document.querySelectorAll('.surgery-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                // 重置所有按钮样式
+                document.querySelectorAll('.surgery-btn').forEach(b => {
+                    b.classList.remove('bg-secondary', 'shadow-button-selected', 'ring-4', 'ring-secondary/30');
+                    b.classList.add('bg-primary', 'shadow-button');
+                });
+                
+                // 设置当前按钮选中样式
+                this.classList.remove('bg-primary', 'shadow-button');
+                this.classList.add('bg-secondary', 'shadow-button-selected', 'ring-4', 'ring-secondary/30');
+            });
+        });
+
+        // 提交按钮点击事件
+        submitBtn.addEventListener('click', function() {
+            if (validateForm()) {
+                // 验证通过，更新确认弹窗中的手术项目
+                const selectedBtn = document.querySelector('.surgery-btn.bg-secondary');
+                document.getElementById('selected-surgery').textContent = selectedBtn.textContent.trim();
+                
+                // 显示确认弹窗
+                const confirmModal = document.getElementById('confirm-modal');
+                const confirmModalContent = document.getElementById('confirm-modal-content');
+                
+                confirmModal.classList.remove('hidden');
+                // 触发动画
+                setTimeout(() => {
+                    confirmModalContent.classList.remove('scale-95', 'opacity-0');
+                    confirmModalContent.classList.add('scale-100', 'opacity-100');
+                }, 10);
+            }
+        });
+
+        // 取消按钮点击事件
+        document.getElementById('cancel-btn').addEventListener('click', function() {
+            const confirmModal = document.getElementById('confirm-modal');
+            const confirmModalContent = document.getElementById('confirm-modal-content');
+            
+            confirmModalContent.classList.remove('scale-100', 'opacity-100');
+            confirmModalContent.classList.add('scale-95', 'opacity-0');
+            
+            setTimeout(() => {
+                confirmModal.classList.add('hidden');
+            }, 300);
+        });
+
+        // 确定按钮点击事件 - 跳转到page2
+        document.getElementById('confirm-btn').addEventListener('click', function() {
+            const confirmModal = document.getElementById('confirm-modal');
+            const confirmModalContent = document.getElementById('confirm-modal-content');
+            
+            confirmModalContent.classList.remove('scale-100', 'opacity-100');
+            confirmModalContent.classList.add('scale-95', 'opacity-0');
+            
+            setTimeout(() => {
+                confirmModal.classList.add('hidden');
+                showPage('page2'); // 跳转到page2
+            }, 300);
+        });
+
+        // 关闭错误弹窗按钮事件
+        closeErrorBtn.addEventListener('click', closeErrorModal);
+
+        // 点击弹窗外部关闭
+        document.getElementById('confirm-modal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                document.getElementById('cancel-btn').click();
+            }
+        });
+        
+        document.getElementById('error-modal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeErrorModal();
+            }
+        });
+
+        // 页面2相关功能
+        // 保障计划切换
+        document.getElementById('basic-plan').addEventListener('click', function() {
+            this.classList.add('plan-btn-active');
+            this.classList.remove('plan-btn-inactive');
+            document.getElementById('premium-plan').classList.remove('plan-btn-active');
+            document.getElementById('premium-plan').classList.add('plan-btn-inactive');
+        });
+
+        document.getElementById('premium-plan').addEventListener('click', function() {
+            this.classList.add('plan-btn-active');
+            this.classList.remove('plan-btn-inactive');
+            document.getElementById('basic-plan').classList.remove('plan-btn-active');
+            document.getElementById('basic-plan').classList.add('plan-btn-inactive');
+        });
+
+        // 标签切换
+        document.getElementById('claim-guide-tab').addEventListener('click', function() {
+            this.classList.add('text-orange-primary', 'border-b-2', 'border-orange-primary');
+            this.classList.remove('text-gray-500');
+            document.getElementById('buy-insurance-tab').classList.remove('text-orange-primary', 'border-b-2', 'border-orange-primary');
+            document.getElementById('buy-insurance-tab').classList.add('text-gray-500');
+        });
+
+        document.getElementById('buy-insurance-tab').addEventListener('click', function() {
+            this.classList.add('text-orange-primary', 'border-b-2', 'border-orange-primary');
+            this.classList.remove('text-gray-500');
+            document.getElementById('claim-guide-tab').classList.remove('text-orange-primary', 'border-b-2', 'border-orange-primary');
+            document.getElementById('claim-guide-tab').classList.add('text-gray-500');
+        });
+
+        // 返回page1
+        document.getElementById('back-to-page1').addEventListener('click', function() {
+            showPage('page1');
+        });
+
+        // 跳转到page3
+        document.getElementById('go-to-page3').addEventListener('click', function() {
+            showPage('page3');
+        });
+
+        // 页面3相关功能
+        // 返回page2
+        document.getElementById('back-to-page2').addEventListener('click', function() {
+            showPage('page2');
+        });
+
+        // 初始显示page1
+        showPage('page1');
+    </script>
+</body>
+</html>
